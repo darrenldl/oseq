@@ -1,0 +1,6 @@
+let print_nat int_module =
+  Printf.printf {|
+|}
+
+let printers : (string -> unit) list = [
+]
