@@ -1308,3 +1308,55 @@ let pp ?(sep=",") pp_item fmt l =
 (*$inject
   module Foo : module type of Seq = OSeq
 *)
+
+module Number_seqs = struct
+  module Int64_seqs = struct
+   let nat = Generator.(
+        let rec aux n = yield n >>= fun () -> aux (Int64.succ n) in
+        run (aux 0L)
+      )
+
+   let arithmetic ~start ~diff = Generator.(
+       let rec aux n = yield n >>= fun () -> aux (Int64.add n diff) in
+       run (aux start)
+     )
+
+   let geometric ~start ~ratio = Generator.(
+       let rec aux n = yield n >>= fun () -> aux (Int64.mul n ratio) in
+       run (aux start)
+     )
+
+   let odd_pos = arithmetic ~start:1L ~diff:2L
+
+   let odd_neg = arithmetic ~start:(-1L) ~diff:(-2L)
+
+   let even_pos = arithmetic ~start:0L ~diff:2L
+
+   let even_neg = arithmetic ~start:0L ~diff:(-2L)
+ end
+
+  module Int_seqs = struct
+    let of_int64_seq s =
+      map Int64.to_int s
+
+    let nat = of_int64_seq Int64_seqs.nat
+
+    let arithmetic ~start ~diff =
+      let start = Int64.of_int start in
+      let diff = Int64.of_int diff in
+      of_int64_seq (Int64_seqs.arithmetic ~start ~diff)
+
+    let geometric ~start ~ratio =
+      let start = Int64.of_int start in
+      let ratio = Int64.of_int ratio in
+      of_int64_seq (Int64_seqs.geometric ~start ~ratio)
+
+    let odd_pos = of_int64_seq Int64_seqs.odd_pos
+
+    let odd_neg = of_int64_seq Int64_seqs.odd_neg
+
+    let even_pos = of_int64_seq Int64_seqs.even_pos
+
+    let even_neg = of_int64_seq Int64_seqs.even_neg
+  end
+end
