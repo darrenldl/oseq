@@ -305,6 +305,36 @@ val cartesian_product : 'a t t -> 'a list t
     invariant: [cartesian_product l = map_product_l id l].
     @since 0.2 *)
 
+val cartesian_product_ordered : 'a t t -> 'a list t
+(** Same as [cartesian_product] but "preserves" order of
+    individual sequences.
+
+    Roughly speaking, for sequences s_1, s_2, ..., s_n
+    it exhausts s_n before "bumping" s_(n-1), and so on.
+
+    {b NOTE} that this is {b NOT} an invariant:
+    [cartesian_product_ordered l = cartesian_product l |> sort].
+
+    [cartesian_product_ordered] follows the ordering
+    of the individual sequences, which may not be
+    the same as the one used by [sort].
+
+    For example:
+    {[
+      (* following case satisfies above property about
+         cartesian_product and sort *)
+      # cartesian_product_ordered [[1;2];[3];[4;5;6]] =
+      [[1;3;4];[1;3;5];[1;3;6];[2;3;4];[2;3;5];[2;3;6]];;
+
+      (* following case do NOT satisfy above property
+         about cartesian_product and sort *)
+      # cartesian_product_ordered [[2; 1]; [3]; [6; 4; 5]] =
+      [[2;3;6];[2;3;4];[2;3;5];[1;3;6];[1;3;4];[1;3;5]]
+    ]}
+
+    @since 0.4
+*)
+
 val map_product_l : ('a -> 'b t) -> 'a t -> 'b list t
 (** [map_product_l f l] maps each element of [l] to a list of
     objects of type ['b] using [f].

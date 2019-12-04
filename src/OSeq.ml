@@ -610,6 +610,30 @@ let rec cartesian_product l () =
     (to_list @@ cartesian_product @@ ofll [[1;2];[3];[4];[5];[6]])
 *)
 
+(* cartesian_product but ordered
+
+   It forms the converse of lexicographic product:
+   for sequences s_1, s_2, ..., s_n, assume they
+   individually induce a converse of strict order (or generate elements
+   which follow converse of a strict order), i.e. (s_1, <), (s_2, <), ...,
+   then this sequence (g) induces the converse of the n-fold lexicographic
+   product i.e. (g, <^n_lex)
+*)
+let cartesian_product_ordered l () =
+  Seq.fold_left
+    (fun product_seq s ->
+       Seq.flat_map
+         (fun product_acc ->
+            match product_acc with
+            | [] -> Seq.map (fun x -> [x]) s
+            | xs ->
+              Seq.map (fun x -> x :: xs) s
+         )
+         product_seq
+    )
+    (Seq.return []) (* begin with "empty" product *)
+    l
+  |> Seq.map List.rev
 
 (* cartesian product of lists of lists *)
 let map_product_l f l =
