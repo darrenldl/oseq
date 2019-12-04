@@ -619,7 +619,7 @@ let rec cartesian_product l () =
    then this sequence (g) induces the converse of the n-fold lexicographic
    product i.e. (g, <^n_lex)
 *)
-let cartesian_product_ordered l () =
+let cartesian_product_ordered l =
   Seq.fold_left
     (fun product_seq s ->
        Seq.flat_map
